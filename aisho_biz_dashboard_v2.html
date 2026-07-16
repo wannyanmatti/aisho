@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アイショウ for Business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1520; --surface:#111E2D; --surface-2:#162338; --surface-3:#1C2D44;
+  --border:rgba(255,255,255,0.07); --text:#E8EEF4; --text-soft:#7A93A8; --text-dim:#3D5468;
+  --accent:#C06C84; --accent-soft:rgba(192,108,132,0.15);
+  --teal:#4ECDC4; --teal-soft:rgba(78,205,196,0.12);
+  --amber:#F7C59F; --amber-soft:rgba(247,197,159,0.12);
+  --good:#6DB88A; --bad:#E07A7A;
+  --f-display:'DM Serif Display',serif; --f-body:'Inter',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:var(--f-body);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+.layout{display:flex;flex:1;}
+
+/* サイドバー */
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:10;}
+.sidebar-logo{padding:22px 22px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.logo-mark{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-style:italic;font-size:16px;color:#fff;}
+.logo-text{font-size:13px;font-weight:700;display:flex;flex-direction:column;line-height:1.2;}
+.logo-text .sub{font-size:9px;color:var(--text-soft);font-weight:500;letter-spacing:1px;text-transform:uppercase;}
+.sidebar-section{padding:18px 14px 6px;}
+.sidebar-label{font-size:9.5px;font-weight:600;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;padding:0 8px;margin-bottom:6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:13px;color:var(--text-soft);cursor:pointer;transition:all .15s;margin-bottom:2px;user-select:none;}
+.nav-item:hover{background:var(--surface-2);color:var(--text);}
+.nav-item.active{background:var(--accent-soft);color:var(--accent);}
+.nav-item svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.sidebar-footer{margin-top:auto;padding:16px 14px;border-top:1px solid var(--border);}
+.company-badge{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--surface-2);}
+.company-avatar{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#8B3F57);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.company-name{font-size:11.5px;font-weight:600;}
+.company-plan{font-size:9.5px;color:var(--text-soft);}
+
+/* メイン */
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;}
+.topbar-title{font-size:15px;font-weight:600;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.date-range{display:flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--text-soft);cursor:pointer;}
+.date-range svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;}
+.export-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-family:var(--f-body);font-size:12px;font-weight:600;cursor:pointer;}
+
+/* 画面 */
+.page{display:none;flex:1;flex-direction:column;}
+.page.active{display:flex;}
+.content{padding:24px 28px;flex:1;overflow-y:auto;}
+
+/* 共通パネル */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.panel-title{font-size:13px;font-weight:700;}
+.panel-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--surface-3);color:var(--text-soft);}
+.grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:22px;}
+.grid-2-rev{display:grid;grid-template-columns:1fr 1.4fr;gap:14px;margin-bottom:22px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:22px;}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;}
+.kpi-eyebrow{font-size:10.5px;font-weight:600;color:var(--text-soft);letter-spacing:0.5px;margin-bottom:10px;text-transform:uppercase;}
+.kpi-value{font-family:var(--f-display);font-size:32px;color:var(--text);margin-bottom:6px;}
+.kpi-delta{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;}
+.delta-up{color:var(--teal);}
+.delta-down{color:var(--bad);}
+
+/* ヒートマップ */
+.heatmap-wrap{overflow-x:auto;}
+.heatmap{border-collapse:collapse;width:100%;}
+.heatmap th{font-size:10px;font-weight:600;color:var(--text-soft);padding:6px 8px;text-align:center;border-bottom:1px solid var(--border);}
+.heatmap th.row-head{text-align:left;width:140px;}
+.heatmap td{padding:8px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.03);}
+.heatmap td.ing-label{text-align:left;font-size:12px;font-weight:500;color:var(--text);padding-left:0;}
+.heat-cell{width:48px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin:auto;}
+
+/* トレンド */
+.trend-chart{display:flex;flex-direction:column;gap:12px;}
+.trend-item{display:flex;flex-direction:column;gap:6px;}
+.trend-meta{display:flex;justify-content:space-between;align-items:center;}
+.trend-name{font-size:12px;font-weight:600;}
+.trend-stat{font-size:11px;font-weight:700;}
+.trend-track{height:6px;border-radius:3px;background:var(--surface-3);overflow:hidden;}
+.trend-fill{height:100%;border-radius:3px;}
+
+/* デモグラ */
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.demo-title{font-size:10.5px;font-weight:600;color:var(--text-soft);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px;}
+.demo-bar-group{display:flex;flex-direction:column;gap:7px;}
+.demo-bar-row{display:flex;align-items:center;gap:8px;}
+.demo-bar-label{font-size:11px;color:var(--text-soft);width:40px;flex-shrink:0;}
+.demo-track{flex:1;height:7px;border-radius:4px;background:var(--surface-3);overflow:hidden;}
+.demo-fill{height:100%;border-radius:4px;background:var(--accent);}
+.demo-fill.teal{background:var(--teal);}
+.demo-pct{font-size:11px;font-weight:700;width:32px;text-align:right;}
+
+/* ランキング */
+.ing-rank-list{display:flex;flex-direction:column;gap:10px;}
+.ing-rank-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--surface-2);transition:background .15s;cursor:default;}
+.ing-rank-row:hover{background:var(--surface-3);}
+.rank-num{font-family:var(--f-display);font-style:italic;font-size:18px;color:var(--text-dim);width:20px;flex-shrink:0;}
+.rank-info{flex:1;min-width:0;}
+.rank-name{font-size:12.5px;font-weight:600;}
+.rank-sub{font-size:10.5px;color:var(--text-soft);margin-top:2px;}
+.rank-score{font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.score-up{background:var(--teal-soft);color:var(--teal);}
+.score-hot{background:var(--accent-soft);color:var(--accent);}
+.score-watch{background:var(--amber-soft);color:var(--amber);}
+
+/* 成分トレンドページ: 月別折れ線っぽいバー */
+.monthly-row{display:flex;align-items:flex-end;gap:6px;height:120px;margin-bottom:8px;}
+.monthly-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.monthly-bar{width:100%;border-radius:4px 4px 0 0;transition:height .4s ease;}
+.monthly-label{font-size:9px;color:var(--text-dim);}
+.monthly-val{font-size:10px;font-weight:600;}
+
+/* ユーザー分析ページ */
+.seg-row{display:flex;flex-direction:column;gap:10px;}
+.seg-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;background:var(--surface-2);}
+.seg-label{font-size:12.5px;font-weight:600;width:100px;flex-shrink:0;}
+.seg-track{flex:1;height:10px;border-radius:5px;background:var(--surface-3);overflow:hidden;}
+.seg-fill{height:100%;border-radius:5px;}
+.seg-count{font-size:11px;font-weight:700;width:50px;text-align:right;color:var(--text-soft);}
+
+/* 成分検索ページ */
+.search-bar{display:flex;gap:10px;margin-bottom:18px;}
+.search-input{flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:var(--f-body);font-size:13px;outline:none;}
+.search-input::placeholder{color:var(--text-dim);}
+.search-input:focus{border-color:var(--accent);}
+.search-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-family:var(--f-body);font-size:13px;font-weight:600;cursor:pointer;}
+.ing-detail-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px;}
+.ing-detail-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.ing-detail-name{font-family:var(--f-display);font-size:22px;}
+.ing-detail-score{font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;}
+.ing-detail-body{font-size:12.5px;color:var(--text-soft);line-height:1.7;margin-bottom:14px;}
+.ing-tag-row{display:flex;gap:7px;flex-wrap:wrap;}
+.ing-tag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:var(--surface-3);color:var(--text-soft);}
+
+/* 月次レポートページ */
+.report-list{display:flex;flex-direction:column;gap:10px;}
+.report-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:12px;background:var(--surface-2);cursor:pointer;transition:background .15s;}
+.report-row:hover{background:var(--surface-3);}
+.report-icon{width:36px;height:36px;border-radius:9px;background:var(--surface-3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.report-icon svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.report-info{flex:1;}
+.report-name{font-size:13px;font-weight:600;}
+.report-sub{font-size:11px;color:var(--text-soft);margin-top:2px;}
+.report-dl{font-size:11px;font-weight:600;color:var(--accent);}
+
+/* フッター */
+.dash-footer{padding:14px 28px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text-dim);}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- サイドバー -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">あ</div>
+    <div class="logo-text">アイショウ<span class="sub">for Business</span></div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">分析</div>
+    <div class="nav-item active" data-page="dashboard">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>ダッシュボード
+    </div>
+    <div class="nav-item" data-page="trend">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>成分トレンド
+    </div>
+    <div class="nav-item" data-page="users">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>ユーザー分析
+    </div>
+    <div class="nav-item" data-page="search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>成分検索
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">レポート</div>
+    <div class="nav-item" data-page="reports">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>月次レポート
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="company-badge">
+      <div class="company-avatar">KS</div>
+      <div><div class="company-name">花王株式会社</div><div class="company-plan">Enterprise</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- メイン -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">ダッシュボード</div>
+    <div class="topbar-right">
+      <div class="date-range">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        2025年10月 〜 2026年6月
+      </div>
+      <button class="export-btn">CSV 出力</button>
+    </div>
+  </div>
+
+  <!-- ========== ダッシュボード ========== -->
+  <div class="page active" id="page-dashboard">
+    <div class="content">
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-eyebrow">アクティブユーザー</div><div class="kpi-value">48,291</div><div class="kpi-delta delta-up">▲ 12.4% <span style="color:var(--text-soft);font-weight:400">先月比</span></div></div>
+        <div class="kpi-card"><div class="kpi-eyebrow">記録された使用日数</div><div class="kpi-value">1.2M</div><div class="kpi-delta delta-up">▲ 8.7% <span style="color:var(--text-soft);font-weight:400">先月比</span></div></div>
+        <div class="kpi-card"><div class="kpi-eyebrow">分析済み成分数</div><div class="kpi-value">312</div><div class="kpi-delta" style="color:var(--text-soft);font-size:11px">日本国内スキンケア製品対応</div></div>
+        <div class="kpi-card"><div class="kpi-eyebrow">好感度スコア 1位</div><div class="kpi-value" style="font-size:22px;padding-top:5px">ナイアシン<br>アミド</div><div class="kpi-delta delta-up">好感率 78.3%</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">成分 × 年代 好感度ヒートマップ</div><div class="panel-badge">直近90日</div></div>
+          <div class="heatmap-wrap"><table class="heatmap" id="heatmapTable"></table></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">注目の成分ランキング</div><div class="panel-badge">上昇中</div></div>
+          <div class="ing-rank-list" id="rankList"></div>
+        </div>
+      </div>
+      <div class="grid-2-rev">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">ユーザー属性</div><div class="panel-badge">48,291人</div></div>
+          <div class="demo-grid" id="demoGrid"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">成分好感度トレンド（月次）</div><div class="panel-badge">上位6成分</div></div>
+          <div class="trend-chart" id="trendChart"></div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-footer"><span>データは個人を特定しない統計情報として提供されます</span><span>最終更新: 2026年7月16日 09:00</span></div>
+  </div>
+
+  <!-- ========== 成分トレンド ========== -->
+  <div class="page" id="page-trend">
+    <div class="content">
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-eyebrow">今月 最も上昇した成分</div><div class="kpi-value" style="font-size:22px;padding-top:4px">スクワラン</div><div class="kpi-delta delta-up">▲ +6.2pt 前月比</div></div>
+        <div class="kpi-card"><div class="kpi-eyebrow">今月 要注意フラグ</div><div class="kpi-value" style="font-size:22px;padding-top:4px">グリコール酸</div><div class="kpi-delta delta-down">▼ 荒れ報告 +18%</div></div>
+        <div class="kpi-card"><div class="kpi-eyebrow">トレンド観測成分数</div><div class="kpi-value">52</div><div class="kpi-delta" style="color:var(--text-soft);font-size:11px">前月比 +4成分追加</div></div>
+        <div class="kpi-card"><div class="kpi-eyebrow">好感度スコア 平均</div><div class="kpi-value">61.4</div><div class="kpi-delta delta-up">▲ 2.1pt 先月比</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">成分別 月次好感度推移（直近6ヶ月）</div><div class="panel-badge">上位4成分</div></div>
+          <div id="monthlyCharts"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">季節トレンド指数</div><div class="panel-badge">6月データ</div></div>
+          <div class="trend-chart" id="seasonTrend"></div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-footer"><span>データは個人を特定しない統計情報として提供されます</span><span>最終更新: 2026年7月16日 09:00</span></div>
+  </div>
+
+  <!-- ========== ユーザー分析 ========== -->
+  <div class="page" id="page-users">
+    <div class="content">
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-eyebrow">総ユーザー数</div><div class="kpi-value">48,291</div><div class="kpi-delta delta-up">▲ 12.4% 先月比</div></div>
+        <div class="kpi-card"><div class="kpi-eyebrow">継続率（30日）</div><div class="kpi-value">67%</div><div class="kpi-delta delta-up">▲ 3pt 先月比</div></div>
+        <div class="kpi-card"><div class="kpi-eyebrow">平均記録日数 / 月</div><div class="kpi-value">18.4</div><div class="kpi-delta" style="color:var(--text-soft);font-size:11px">1ユーザーあたり</div></div>
+        <div class="kpi-card"><div class="kpi-eyebrow">最多年代</div><div class="kpi-value">20代</div><div class="kpi-delta delta-up">全体の 38%</div></div>
+      </div>
+      <div class="grid-3">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">年代分布</div></div>
+          <div class="seg-row" id="ageSeg"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">主な肌悩み</div><div class="panel-badge">複数選択</div></div>
+          <div class="seg-row" id="concernSeg"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">肌タイプ</div></div>
+          <div class="seg-row" id="skinSeg"></div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">使用継続率 推移（月次）</div></div>
+          <div class="trend-chart" id="retentionTrend"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">記録頻度分布</div><div class="panel-badge">週あたり</div></div>
+          <div class="seg-row" id="freqSeg"></div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-footer"><span>データは個人を特定しない統計情報として提供されます</span><span>最終更新: 2026年7月16日 09:00</span></div>
+  </div>
+
+  <!-- ========== 成分検索 ========== -->
+  <div class="page" id="page-search">
+    <div class="content">
+      <div class="search-bar">
+        <input class="search-input" id="searchInput" type="text" placeholder="成分名を入力（例：ナイアシンアミド、レチノール）">
+        <button class="search-btn" id="searchBtn">検索</button>
+      </div>
+      <div id="searchResults"></div>
+    </div>
+    <div class="dash-footer"><span>データは個人を特定しない統計情報として提供されます</span><span>最終更新: 2026年7月16日 09:00</span></div>
+  </div>
+
+  <!-- ========== 月次レポート ========== -->
+  <div class="page" id="page-reports">
+    <div class="content">
+      <div class="panel" style="margin-bottom:22px">
+        <div class="panel-head"><div class="panel-title">レポート一覧</div><div class="panel-badge">自動生成</div></div>
+        <div class="report-list" id="reportList"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">カスタムレポート設定</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <div class="demo-title" style="margin-bottom:8px">対象成分</div>
+            <div style="display:flex;flex-wrap:wrap;gap:7px;" id="customIngTags"></div>
+          </div>
+          <div>
+            <div class="demo-title" style="margin-bottom:8px">対象年代</div>
+            <div style="display:flex;flex-wrap:wrap;gap:7px;" id="customAgeTags"></div>
+          </div>
+        </div>
+        <div style="margin-top:16px;text-align:right">
+          <button class="export-btn" style="padding:9px 22px">レポートを生成する</button>
+        </div>
+      </div>
+    </div>
+    <div class="dash-footer"><span>データは個人を特定しない統計情報として提供されます</span><span>最終更新: 2026年7月16日 09:00</span></div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+// ===== ナビゲーション =====
+const pageMap = {
+  dashboard:'ダッシュボード', trend:'成分トレンド',
+  users:'ユーザー分析', search:'成分検索', reports:'月次レポート'
+};
+document.querySelectorAll('.nav-item[data-page]').forEach(item=>{
+  item.addEventListener('click',()=>{
+    const p = item.dataset.page;
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('page-'+p).classList.add('active');
+    document.getElementById('topbarTitle').textContent = pageMap[p];
+  });
+});
+
+// ===== 共通データ =====
+const heatScores = {
+  'ナイアシンアミド':[72,82,78,71,65],'ヒアルロン酸':[68,74,80,84,79],
+  'レチノール':[30,48,62,70,55],'セラミド':[60,70,76,80,82],
+  'ビタミンC':[55,72,68,60,50],'グリコール酸':[28,52,58,48,30],'スクワラン':[64,70,75,78,80],
+};
+const ageGroups=['10代','20代','30代','40代','50代以上'];
+
+function scoreToColor(v){ if(v>=75)return`rgba(109,184,138,${.2+v/200})`;if(v>=60)return`rgba(78,205,196,${.1+v/300})`;if(v>=45)return`rgba(247,197,159,${.15+v/400})`;return`rgba(224,122,122,${.15+(100-v)/400})`; }
+function scoreToText(v){ if(v>=75)return'var(--good)';if(v>=60)return'var(--teal)';if(v>=45)return'var(--amber)';return'var(--bad)'; }
+
+// ===== ダッシュボード: ヒートマップ =====
+(()=>{
+  const table=document.getElementById('heatmapTable');
+  const thead=document.createElement('thead'); const hr=document.createElement('tr');
+  const th0=document.createElement('th'); th0.className='row-head'; th0.textContent='成分'; hr.appendChild(th0);
+  ageGroups.forEach(a=>{const th=document.createElement('th');th.textContent=a;hr.appendChild(th);});
+  thead.appendChild(hr); table.appendChild(thead);
+  const tbody=document.createElement('tbody');
+  Object.entries(heatScores).forEach(([ing,scores])=>{
+    const tr=document.createElement('tr');
+    const tdl=document.createElement('td'); tdl.className='ing-label'; tdl.textContent=ing; tr.appendChild(tdl);
+    scores.forEach(v=>{
+      const td=document.createElement('td');
+      const cell=document.createElement('div'); cell.className='heat-cell';
+      cell.style.background=scoreToColor(v); cell.style.color=scoreToText(v); cell.textContent=v+'%';
+      td.appendChild(cell); tr.appendChild(td);
+    }); tbody.appendChild(tr);
+  }); table.appendChild(tbody);
+})();
+
+// ===== ダッシュボード: ランキング =====
+(()=>{
+  const ranks=[
+    {name:'ナイアシンアミド',sub:'20代・30代で特に高評価',score:'+5.2pt',type:'score-up'},
+    {name:'セラミド',sub:'全年代で安定した好感度',score:'人気継続',type:'score-hot'},
+    {name:'ヒアルロン酸',sub:'40代以上での支持が拡大中',score:'+3.8pt',type:'score-up'},
+    {name:'スクワラン',sub:'乾燥期に急上昇',score:'+2.1pt',type:'score-up'},
+    {name:'グリコール酸',sub:'10〜20代で要注意報告が増加',score:'要注意',type:'score-watch'},
+  ];
+  const rl=document.getElementById('rankList');
+  ranks.forEach((r,i)=>{
+    const row=document.createElement('div'); row.className='ing-rank-row';
+    row.innerHTML=`<div class="rank-num">${i+1}</div><div class="rank-info"><div class="rank-name">${r.name}</div><div class="rank-sub">${r.sub}</div></div><div class="rank-score ${r.type}">${r.score}</div>`;
+    rl.appendChild(row);
+  });
+})();
+
+// ===== ダッシュボード: デモグラ =====
+(()=>{
+  const dg=document.getElementById('demoGrid');
+  const buildSection=(title,data,cls)=>{
+    const sec=document.createElement('div');
+    sec.innerHTML=`<div class="demo-title">${title}</div>`;
+    const grp=document.createElement('div'); grp.className='demo-bar-group';
+    data.forEach(d=>{
+      const row=document.createElement('div'); row.className='demo-bar-row';
+      row.innerHTML=`<div class="demo-bar-label">${d.l}</div><div class="demo-track"><div class="demo-fill ${cls}" style="width:${d.v*1.3}%"></div></div><div class="demo-pct">${d.v}%</div>`;
+      grp.appendChild(row);
+    }); sec.appendChild(grp); dg.appendChild(sec);
+  };
+  buildSection('年代',[{l:'10代',v:12},{l:'20代',v:38},{l:'30代',v:28},{l:'40代',v:15},{l:'50+',v:7}],'');
+  buildSection('主な肌悩み（複数選択）',[{l:'乾燥',v:71},{l:'ニキビ',v:52},{l:'毛穴',v:44},{l:'シミ',v:38},{l:'たるみ',v:21}],'teal');
+})();
+
+// ===== ダッシュボード: トレンド =====
+(()=>{
+  const trends=[
+    {name:'ナイアシンアミド',pct:83,color:'var(--teal)'},{name:'ヒアルロン酸',pct:75,color:'var(--accent)'},
+    {name:'セラミド',pct:70,color:'#8DB4FF'},{name:'スクワラン',pct:58,color:'#B8A4FF'},
+    {name:'ビタミンC誘導体',pct:48,color:'var(--amber)'},{name:'レチノール',pct:32,color:'var(--bad)'},
+  ];
+  const tc=document.getElementById('trendChart');
+  trends.forEach(t=>{
+    const item=document.createElement('div'); item.className='trend-item';
+    item.innerHTML=`<div class="trend-meta"><div class="trend-name">${t.name}</div><div class="trend-stat" style="color:${t.color}">${t.pct}%</div></div><div class="trend-track"><div class="trend-fill" style="width:${t.pct}%;background:${t.color}"></div></div>`;
+    tc.appendChild(item);
+  });
+})();
+
+// ===== 成分トレンドページ =====
+(()=>{
+  const months=['1月','2月','3月','4月','5月','6月'];
+  const ingTrendData=[
+    {name:'ナイアシンアミド',vals:[70,72,74,76,78,82],color:'var(--teal)'},
+    {name:'スクワラン',vals:[50,52,55,58,62,68],color:'#B8A4FF'},
+    {name:'ヒアルロン酸',vals:[72,71,73,74,74,75],color:'var(--accent)'},
+    {name:'グリコール酸',vals:[55,54,52,50,47,44],color:'var(--bad)'},
+  ];
+  const mc=document.getElementById('monthlyCharts');
+  ingTrendData.forEach(ing=>{
+    const block=document.createElement('div'); block.style.marginBottom='18px';
+    const label=document.createElement('div'); label.style.cssText='font-size:12px;font-weight:600;margin-bottom:8px;'; label.textContent=ing.name;
+    const row=document.createElement('div'); row.className='monthly-row';
+    const max=Math.max(...ing.vals);
+    ing.vals.forEach((v,i)=>{
+      const col=document.createElement('div'); col.className='monthly-col';
+      col.innerHTML=`<div class="monthly-val" style="color:${ing.color}">${v}</div><div class="monthly-bar" style="height:${(v/max)*80}px;background:${ing.color};opacity:0.7"></div><div class="monthly-label">${months[i]}</div>`;
+      row.appendChild(col);
+    });
+    block.appendChild(label); block.appendChild(row); mc.appendChild(block);
+  });
+
+  const seasonData=[
+    {name:'保湿成分（ヒアルロン酸等）',pct:88,color:'var(--teal)'},{name:'美白成分（ナイアシンアミド等）',pct:75,color:'var(--accent)'},
+    {name:'角質ケア（グリコール酸等）',pct:41,color:'var(--amber)'},{name:'レチノール系',pct:35,color:'var(--bad)'},
+    {name:'スクワラン',pct:68,color:'#B8A4FF'},
+  ];
+  const st=document.getElementById('seasonTrend');
+  seasonData.forEach(t=>{
+    const item=document.createElement('div'); item.className='trend-item';
+    item.innerHTML=`<div class="trend-meta"><div class="trend-name">${t.name}</div><div class="trend-stat" style="color:${t.color}">${t.pct}%</div></div><div class="trend-track"><div class="trend-fill" style="width:${t.pct}%;background:${t.color}"></div></div>`;
+    st.appendChild(item);
+  });
+})();
+
+// ===== ユーザー分析ページ =====
+(()=>{
+  function buildSeg(id,data,color){
+    const wrap=document.getElementById(id); const max=Math.max(...data.map(d=>d.v));
+    data.forEach(d=>{
+      const item=document.createElement('div'); item.className='seg-item';
+      item.innerHTML=`<div class="seg-label">${d.l}</div><div class="seg-track"><div class="seg-fill" style="width:${(d.v/max)*100}%;background:${color}"></div></div><div class="seg-count">${d.v}%</div>`;
+      wrap.appendChild(item);
+    });
+  }
+  buildSeg('ageSeg',[{l:'10代',v:12},{l:'20代',v:38},{l:'30代',v:28},{l:'40代',v:15},{l:'50代以上',v:7}],'var(--accent)');
+  buildSeg('concernSeg',[{l:'乾燥',v:71},{l:'ニキビ',v:52},{l:'毛穴',v:44},{l:'シミ',v:38},{l:'エイジング',v:29},{l:'たるみ',v:21}],'var(--teal)');
+  buildSeg('skinSeg',[{l:'混合肌',v:34},{l:'乾燥肌',v:29},{l:'普通肌',v:22},{l:'脂性肌',v:10},{l:'敏感肌',v:5}],'#8DB4FF');
+  buildSeg('freqSeg',[{l:'毎日',v:42},{l:'週5〜6回',v:28},{l:'週3〜4回',v:19},{l:'週1〜2回',v:11}],'#B8A4FF');
+
+  const retData=[{name:'2026年2月',pct:58},{name:'3月',pct:61},{name:'4月',pct:63},{name:'5月',pct:65},{name:'6月',pct:67}];
+  const rt=document.getElementById('retentionTrend');
+  retData.forEach(t=>{
+    const item=document.createElement('div'); item.className='trend-item';
+    item.innerHTML=`<div class="trend-meta"><div class="trend-name">${t.name}</div><div class="trend-stat" style="color:var(--teal)">${t.pct}%</div></div><div class="trend-track"><div class="trend-fill" style="width:${t.pct}%;background:var(--teal)"></div></div>`;
+    rt.appendChild(item);
+  });
+})();
+
+// ===== 成分検索ページ =====
+const ingDB=[
+  {name:'ナイアシンアミド',score:78,scoreType:'score-up',desc:'ビタミンB3の一種。美白・毛穴ケア・バリア機能改善に効果的。20〜30代ユーザーで特に好評。',tags:['美白','毛穴','バリア','全年代']},
+  {name:'ヒアルロン酸',score:76,scoreType:'score-up',desc:'高い保湿力を持つ成分。乾燥が気になる方全般で高い好感度を維持。40代以上での支持が拡大中。',tags:['保湿','乾燥ケア','全年代']},
+  {name:'レチノール',score:38,scoreType:'score-watch',desc:'ターンオーバー促進成分。効果は高いが、使用初期のA反応（赤み・乾燥）が10〜20代ユーザーに多く報告されている。',tags:['エイジングケア','注意が必要','30代以上推奨']},
+  {name:'セラミド',score:74,scoreType:'score-up',desc:'肌のバリア機能を担う細胞間脂質成分。敏感肌・乾燥肌ユーザーに特に高評価。全年代で安定した好感度。',tags:['バリア','敏感肌','保湿']},
+  {name:'グリコール酸',score:44,scoreType:'score-watch',desc:'AHA（アルファヒドロキシ酸）の一種。角質ケア効果があるが、10〜20代で肌荒れ報告が増加傾向。使用頻度の見直しを推奨。',tags:['角質ケア','要注意','週1〜2回推奨']},
+  {name:'スクワラン',score:70,scoreType:'score-up',desc:'植物由来の保湿オイル成分。べたつきが少なく、乾燥期のユーザー評価が特に高い。',tags:['保湿','オイル','全年代']},
+  {name:'ビタミンC誘導体',score:62,scoreType:'score-up',desc:'ビタミンCを安定化させた美白成分。20〜30代の美白ケア層に人気が高い。',tags:['美白','明るさ','20〜30代']},
+];
+
+function renderSearch(query){
+  const results=document.getElementById('searchResults');
+  const hits=query?ingDB.filter(i=>i.name.includes(query)||i.tags.some(t=>t.includes(query))):ingDB;
+  results.innerHTML='';
+  if(hits.length===0){results.innerHTML='<div style="color:var(--text-soft);font-size:13px;padding:20px 0">該当する成分が見つかりませんでした。</div>';return;}
+  hits.forEach(ing=>{
+    const card=document.createElement('div'); card.className='ing-detail-card';
+    card.innerHTML=`
+      <div class="ing-detail-head">
+        <div class="ing-detail-name">${ing.name}</div>
+        <div class="ing-detail-score ${ing.scoreType}">好感度 ${ing.score}%</div>
+      </div>
+      <div class="ing-detail-body">${ing.desc}</div>
+      <div class="ing-tag-row">${ing.tags.map(t=>`<span class="ing-tag">${t}</span>`).join('')}</div>`;
+    results.appendChild(card);
+  });
+}
+renderSearch('');
+document.getElementById('searchBtn').addEventListener('click',()=>renderSearch(document.getElementById('searchInput').value.trim()));
+document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')renderSearch(e.target.value.trim());});
+
+// ===== 月次レポートページ =====
+(()=>{
+  const reports=[
+    {name:'2026年6月 成分トレンドレポート',sub:'2026年6月30日 作成・全312成分対象',dl:'PDF'},
+    {name:'2026年5月 成分トレンドレポート',sub:'2026年5月31日 作成・全298成分対象',dl:'PDF'},
+    {name:'2026年Q1 ユーザー属性レポート',sub:'2026年4月1日 作成・48,291人分析',dl:'PDF / CSV'},
+    {name:'2026年4月 成分トレンドレポート',sub:'2026年4月30日 作成・全290成分対象',dl:'PDF'},
+    {name:'2025年度 年間サマリーレポート',sub:'2026年3月31日 作成・全年度データ集計',dl:'PDF / CSV'},
+  ];
+  const rl=document.getElementById('reportList');
+  reports.forEach(r=>{
+    const row=document.createElement('div'); row.className='report-row';
+    row.innerHTML=`<div class="report-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="report-info"><div class="report-name">${r.name}</div><div class="report-sub">${r.sub}</div></div><div class="report-dl">${r.dl} ↓</div>`;
+    rl.appendChild(row);
+  });
+
+  ['ナイアシンアミド','レチノール','セラミド','ヒアルロン酸','ビタミンC'].forEach(t=>{
+    const tag=document.createElement('span'); tag.className='ing-tag'; tag.textContent=t;
+    tag.style.cursor='pointer';
+    tag.addEventListener('click',()=>tag.style.background=tag.style.background?'':'var(--accent-soft)');
+    document.getElementById('customIngTags').appendChild(tag);
+  });
+  ['10代','20代','30代','40代','50代以上'].forEach(t=>{
+    const tag=document.createElement('span'); tag.className='ing-tag'; tag.textContent=t;
+    tag.style.cursor='pointer';
+    tag.addEventListener('click',()=>tag.style.background=tag.style.background?'':'var(--teal-soft)');
+    document.getElementById('customAgeTags').appendChild(tag);
+  });
+})();
+</script>
+</body>
+</html>
