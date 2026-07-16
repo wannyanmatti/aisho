@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アイショウ for Business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1520;
+  --surface:#111E2D;
+  --surface-2:#162338;
+  --surface-3:#1C2D44;
+  --border:rgba(255,255,255,0.07);
+  --text:#E8EEF4;
+  --text-soft:#7A93A8;
+  --text-dim:#3D5468;
+  --accent:#C06C84;
+  --accent-soft:rgba(192,108,132,0.15);
+  --teal:#4ECDC4;
+  --teal-soft:rgba(78,205,196,0.12);
+  --amber:#F7C59F;
+  --amber-soft:rgba(247,197,159,0.12);
+  --good:#6DB88A;
+  --bad:#E07A7A;
+  --f-display:'DM Serif Display', serif;
+  --f-body:'Inter', sans-serif;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+body{
+  background:var(--bg);
+  font-family:var(--f-body);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ===== サイドバー + メイン ===== */
+.layout{ display:flex; flex:1; }
+
+/* ===== サイドバー ===== */
+.sidebar{
+  width:220px;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column;
+  padding:0; flex-shrink:0;
+  position:fixed; top:0; left:0; bottom:0; z-index:10;
+}
+.sidebar-logo{
+  padding:22px 22px 18px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:10px;
+}
+.logo-mark{
+  width:32px; height:32px; border-radius:8px;
+  background:var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--f-display); font-style:italic;
+  font-size:16px; color:#fff;
+}
+.logo-text{
+  font-family:var(--f-body); font-size:13px; font-weight:700;
+  letter-spacing:0.5px;
+  display:flex; flex-direction:column; line-height:1.2;
+}
+.logo-text .sub{ font-size:9px; color:var(--text-soft); font-weight:500; letter-spacing:1px; text-transform:uppercase; }
+
+.sidebar-section{ padding:18px 14px 6px; }
+.sidebar-label{ font-size:9.5px; font-weight:600; color:var(--text-dim); letter-spacing:1.5px; text-transform:uppercase; padding:0 8px; margin-bottom:6px; }
+.nav-item{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 10px; border-radius:8px;
+  font-size:13px; color:var(--text-soft); cursor:pointer;
+  transition:all .15s; margin-bottom:2px;
+}
+.nav-item:hover{ background:var(--surface-2); color:var(--text); }
+.nav-item.active{ background:var(--accent-soft); color:var(--accent); }
+.nav-item svg{ width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+
+.sidebar-footer{
+  margin-top:auto; padding:16px 14px;
+  border-top:1px solid var(--border);
+}
+.company-badge{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px; border-radius:8px;
+  background:var(--surface-2);
+}
+.company-avatar{
+  width:28px; height:28px; border-radius:6px;
+  background:linear-gradient(135deg, var(--accent), #8B3F57);
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; color:#fff; flex-shrink:0;
+}
+.company-name{ font-size:11.5px; font-weight:600; }
+.company-plan{ font-size:9.5px; color:var(--text-soft); }
+
+/* ===== メインエリア ===== */
+.main{
+  margin-left:220px;
+  flex:1;
+  display:flex; flex-direction:column;
+  min-height:100vh;
+}
+
+/* ===== トップバー ===== */
+.topbar{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:14px 28px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:5;
+}
+.topbar-title{ font-size:15px; font-weight:600; }
+.topbar-right{ display:flex; align-items:center; gap:12px; }
+.date-range{
+  display:flex; align-items:center; gap:6px;
+  background:var(--surface-2); border:1px solid var(--border);
+  border-radius:8px; padding:7px 12px;
+  font-size:12px; color:var(--text-soft); cursor:pointer;
+}
+.date-range svg{ width:13px; height:13px; stroke:currentColor; fill:none; stroke-width:1.8; }
+.export-btn{
+  background:var(--accent); color:#fff;
+  border:none; border-radius:8px;
+  padding:7px 14px; font-family:var(--f-body); font-size:12px; font-weight:600;
+  cursor:pointer; letter-spacing:0.3px;
+}
+
+/* ===== コンテンツ ===== */
+.content{ padding:24px 28px; flex:1; }
+
+/* ===== KPIカード行 ===== */
+.kpi-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px; }
+.kpi-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px; padding:18px 20px;
+}
+.kpi-eyebrow{ font-size:10.5px; font-weight:600; color:var(--text-soft); letter-spacing:0.5px; margin-bottom:10px; text-transform:uppercase; }
+.kpi-value{ font-family:var(--f-display); font-size:32px; color:var(--text); margin-bottom:6px; }
+.kpi-delta{ display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; }
+.delta-up{ color:var(--teal); }
+.delta-down{ color:var(--bad); }
+.kpi-sub{ font-size:10.5px; color:var(--text-dim); margin-top:3px; }
+
+/* ===== 2カラムグリッド ===== */
+.grid-2{ display:grid; grid-template-columns:1.4fr 1fr; gap:14px; margin-bottom:22px; }
+.grid-2-rev{ display:grid; grid-template-columns:1fr 1.4fr; gap:14px; margin-bottom:22px; }
+
+.panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px; padding:20px;
+}
+.panel-head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:18px;
+}
+.panel-title{ font-size:13px; font-weight:700; }
+.panel-badge{
+  font-size:10px; font-weight:600; padding:3px 8px; border-radius:20px;
+  background:var(--surface-3); color:var(--text-soft);
+}
+
+/* ===== ヒートマップ（シグネチャー要素）===== */
+.heatmap-wrap{ overflow-x:auto; }
+.heatmap{ border-collapse:collapse; width:100%; }
+.heatmap th{
+  font-size:10px; font-weight:600; color:var(--text-soft);
+  padding:6px 8px; text-align:center; letter-spacing:0.5px;
+  border-bottom:1px solid var(--border);
+}
+.heatmap th.row-head{ text-align:left; width:140px; }
+.heatmap td{
+  padding:8px; text-align:center;
+  font-family:var(--f-body); font-size:11px; font-weight:600;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.heatmap td.ing-label{
+  text-align:left; font-size:12px; font-weight:500;
+  color:var(--text); padding-left:0;
+}
+.heat-cell{
+  display:inline-block;
+  width:48px; height:30px; border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700;
+}
+
+/* ===== トレンドグラフ ===== */
+.trend-chart{ display:flex; flex-direction:column; gap:12px; }
+.trend-item{ display:flex; flex-direction:column; gap:6px; }
+.trend-meta{ display:flex; justify-content:space-between; align-items:center; }
+.trend-name{ font-size:12px; font-weight:600; }
+.trend-stat{ font-size:11px; font-weight:700; }
+.trend-track{
+  height:6px; border-radius:3px; background:var(--surface-3); overflow:hidden;
+}
+.trend-fill{ height:100%; border-radius:3px; transition:width .6s ease; }
+
+/* ===== デモグラ ===== */
+.demo-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.demo-section{ }
+.demo-title{ font-size:10.5px; font-weight:600; color:var(--text-soft); letter-spacing:0.5px; text-transform:uppercase; margin-bottom:10px; }
+.demo-bar-group{ display:flex; flex-direction:column; gap:7px; }
+.demo-bar-row{ display:flex; align-items:center; gap:8px; }
+.demo-bar-label{ font-size:11px; color:var(--text-soft); width:36px; flex-shrink:0; }
+.demo-track{ flex:1; height:7px; border-radius:4px; background:var(--surface-3); overflow:hidden; }
+.demo-fill{ height:100%; border-radius:4px; background:var(--accent); }
+.demo-fill.teal{ background:var(--teal); }
+.demo-pct{ font-size:11px; font-weight:700; width:32px; text-align:right; }
+
+/* ===== 注目成分リスト ===== */
+.ing-rank-list{ display:flex; flex-direction:column; gap:10px; }
+.ing-rank-row{
+  display:flex; align-items:center; gap:12px;
+  padding:10px 12px; border-radius:10px;
+  background:var(--surface-2);
+  transition:background .15s;
+}
+.ing-rank-row:hover{ background:var(--surface-3); }
+.rank-num{ font-family:var(--f-display); font-style:italic; font-size:18px; color:var(--text-dim); width:20px; flex-shrink:0; }
+.rank-info{ flex:1; min-width:0; }
+.rank-name{ font-size:12.5px; font-weight:600; }
+.rank-sub{ font-size:10.5px; color:var(--text-soft); margin-top:2px; }
+.rank-score{
+  font-size:12px; font-weight:700; padding:4px 10px; border-radius:20px;
+}
+.score-up{ background:var(--teal-soft); color:var(--teal); }
+.score-hot{ background:var(--accent-soft); color:var(--accent); }
+.score-watch{ background:var(--amber-soft); color:var(--amber); }
+
+/* ===== フッター ===== */
+.dash-footer{
+  padding:14px 28px; border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:11px; color:var(--text-dim);
+}
+</style>
+</head>
+<body>
+
+<!-- サイドバー -->
+<div class="layout">
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">あ</div>
+    <div class="logo-text">
+      アイショウ
+      <span class="sub">for Business</span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">分析</div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      ダッシュボード
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      成分トレンド
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      ユーザー分析
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      成分検索
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">レポート</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      月次レポート
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      カスタム出力
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="company-badge">
+      <div class="company-avatar">KS</div>
+      <div>
+        <div class="company-name">花王株式会社</div>
+        <div class="company-plan">Enterprise</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- メインエリア -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">ダッシュボード</div>
+    <div class="topbar-right">
+      <div class="date-range">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        2025年10月 〜 2026年6月
+      </div>
+      <button class="export-btn">CSV 出力</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- KPI -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-eyebrow">アクティブユーザー</div>
+        <div class="kpi-value">48,291</div>
+        <div class="kpi-delta delta-up">▲ 12.4% <span style="color:var(--text-soft);font-weight:400">先月比</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-eyebrow">記録された使用日数</div>
+        <div class="kpi-value">1.2M</div>
+        <div class="kpi-delta delta-up">▲ 8.7% <span style="color:var(--text-soft);font-weight:400">先月比</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-eyebrow">分析済み成分数</div>
+        <div class="kpi-value">312</div>
+        <div class="kpi-delta" style="color:var(--text-soft);font-weight:400; font-size:11px">日本国内スキンケア製品対応</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-eyebrow">好感度スコア 1位</div>
+        <div class="kpi-value" style="font-size:22px; padding-top:5px;">ナイアシン<br>アミド</div>
+        <div class="kpi-delta delta-up">好感率 78.3%</div>
+      </div>
+    </div>
+
+    <!-- ヒートマップ + 注目成分 -->
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">成分 × 年代 好感度ヒートマップ</div>
+          <div class="panel-badge">直近90日</div>
+        </div>
+        <div class="heatmap-wrap">
+          <table class="heatmap" id="heatmapTable"></table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">注目の成分ランキング</div>
+          <div class="panel-badge">上昇中</div>
+        </div>
+        <div class="ing-rank-list" id="rankList"></div>
+      </div>
+    </div>
+
+    <!-- トレンド + デモグラ -->
+    <div class="grid-2-rev">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">ユーザー属性</div>
+          <div class="panel-badge">48,291人</div>
+        </div>
+        <div class="demo-grid" id="demoGrid"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">成分好感度トレンド（月次）</div>
+          <div class="panel-badge">上位6成分</div>
+        </div>
+        <div class="trend-chart" id="trendChart"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="dash-footer">
+    <span>アイショウ for Business — データは個人を特定しない統計情報として提供されます</span>
+    <span>最終更新: 2026年7月16日 09:00</span>
+  </div>
+</div>
+</div>
+
+<script>
+// ===== ヒートマップ =====
+const ingredients = ['ナイアシンアミド','ヒアルロン酸','レチノール','セラミド','ビタミンC','グリコール酸','スクワラン'];
+const ageGroups = ['10代','20代','30代','40代','50代以上'];
+
+// 各成分×年代の好感スコア（0-100）
+const heatScores = {
+  'ナイアシンアミド': [72,82,78,71,65],
+  'ヒアルロン酸':    [68,74,80,84,79],
+  'レチノール':      [30,48,62,70,55],
+  'セラミド':        [60,70,76,80,82],
+  'ビタミンC':       [55,72,68,60,50],
+  'グリコール酸':    [28,52,58,48,30],
+  'スクワラン':      [64,70,75,78,80],
+};
+
+function scoreToColor(v){
+  if(v>=75) return `rgba(109,184,138,${0.2+v/200})`;
+  if(v>=60) return `rgba(78,205,196,${0.1+v/300})`;
+  if(v>=45) return `rgba(247,197,159,${0.15+v/400})`;
+  return `rgba(224,122,122,${0.15+(100-v)/400})`;
+}
+function scoreToText(v){
+  if(v>=75) return 'var(--good)';
+  if(v>=60) return 'var(--teal)';
+  if(v>=45) return 'var(--amber)';
+  return 'var(--bad)';
+}
+
+const table = document.getElementById('heatmapTable');
+// ヘッダー
+const thead = document.createElement('thead');
+const hr = document.createElement('tr');
+const th0 = document.createElement('th'); th0.className='row-head'; th0.textContent='成分'; hr.appendChild(th0);
+ageGroups.forEach(a=>{ const th=document.createElement('th'); th.textContent=a; hr.appendChild(th); });
+thead.appendChild(hr); table.appendChild(thead);
+
+const tbody = document.createElement('tbody');
+ingredients.forEach(ing=>{
+  const tr = document.createElement('tr');
+  const tdl = document.createElement('td'); tdl.className='ing-label'; tdl.textContent=ing; tr.appendChild(tdl);
+  heatScores[ing].forEach(v=>{
+    const td = document.createElement('td');
+    const cell = document.createElement('div');
+    cell.className='heat-cell';
+    cell.style.background=scoreToColor(v);
+    cell.style.color=scoreToText(v);
+    cell.textContent=v+'%';
+    td.appendChild(cell); tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
+});
+table.appendChild(tbody);
+
+// ===== 注目成分ランキング =====
+const ranks = [
+  {name:'ナイアシンアミド', sub:'20代・30代で特に高評価', score:'+5.2pt', type:'score-up'},
+  {name:'セラミド',         sub:'全年代で安定した好感度', score:'人気継続', type:'score-hot'},
+  {name:'ヒアルロン酸',     sub:'40代以上での支持が拡大中', score:'+3.8pt', type:'score-up'},
+  {name:'スクワラン',       sub:'乾燥期に急上昇', score:'+2.1pt', type:'score-up'},
+  {name:'グリコール酸',     sub:'10〜20代で要注意報告が増加', score:'要注意', type:'score-watch'},
+];
+const rl = document.getElementById('rankList');
+ranks.forEach((r,i)=>{
+  const row = document.createElement('div'); row.className='ing-rank-row';
+  row.innerHTML=`
+    <div class="rank-num">${i+1}</div>
+    <div class="rank-info">
+      <div class="rank-name">${r.name}</div>
+      <div class="rank-sub">${r.sub}</div>
+    </div>
+    <div class="rank-score ${r.type}">${r.score}</div>`;
+  rl.appendChild(row);
+});
+
+// ===== デモグラ =====
+const demoData = {
+  age:[{l:'10代',v:12},{l:'20代',v:38},{l:'30代',v:28},{l:'40代',v:15},{l:'50+',v:7}],
+  concern:[{l:'ニキビ',v:52},{l:'乾燥',v:71},{l:'毛穴',v:44},{l:'シミ',v:38},{l:'たるみ',v:21}],
+};
+const dg = document.getElementById('demoGrid');
+
+const ageSection = document.createElement('div'); ageSection.className='demo-section';
+ageSection.innerHTML='<div class="demo-title">年代</div>';
+const ageGroup = document.createElement('div'); ageGroup.className='demo-bar-group';
+demoData.age.forEach(d=>{
+  const row=document.createElement('div'); row.className='demo-bar-row';
+  row.innerHTML=`<div class="demo-bar-label">${d.l}</div><div class="demo-track"><div class="demo-fill" style="width:${d.v*2}%"></div></div><div class="demo-pct">${d.v}%</div>`;
+  ageGroup.appendChild(row);
+});
+ageSection.appendChild(ageGroup); dg.appendChild(ageSection);
+
+const conSection = document.createElement('div'); conSection.className='demo-section';
+conSection.innerHTML='<div class="demo-title">主な肌悩み（複数選択）</div>';
+const conGroup = document.createElement('div'); conGroup.className='demo-bar-group';
+demoData.concern.forEach(d=>{
+  const row=document.createElement('div'); row.className='demo-bar-row';
+  row.innerHTML=`<div class="demo-bar-label" style="width:44px">${d.l}</div><div class="demo-track"><div class="demo-fill teal" style="width:${d.v}%"></div></div><div class="demo-pct">${d.v}%</div>`;
+  conGroup.appendChild(row);
+});
+conSection.appendChild(conGroup); dg.appendChild(conSection);
+
+// ===== トレンドライン =====
+const trends=[
+  {name:'ナイアシンアミド', pct:83, color:'var(--teal)'},
+  {name:'ヒアルロン酸',     pct:75, color:'var(--accent)'},
+  {name:'セラミド',         pct:70, color:'#8DB4FF'},
+  {name:'スクワラン',       pct:58, color:'#B8A4FF'},
+  {name:'ビタミンC誘導体',  pct:48, color:'var(--amber)'},
+  {name:'レチノール',       pct:32, color:'var(--bad)'},
+];
+const tc=document.getElementById('trendChart');
+trends.forEach(t=>{
+  const item=document.createElement('div'); item.className='trend-item';
+  item.innerHTML=`
+    <div class="trend-meta">
+      <div class="trend-name">${t.name}</div>
+      <div class="trend-stat" style="color:${t.color}">${t.pct}%</div>
+    </div>
+    <div class="trend-track"><div class="trend-fill" style="width:${t.pct}%;background:${t.color}"></div></div>`;
+  tc.appendChild(item);
+});
+</script>
+</body>
+</html>
